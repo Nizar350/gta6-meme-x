@@ -1,38 +1,54 @@
-// Entry program for make.fun's gta6-meme-x-01 bounty ("Post a GTA 6 meme on X").
+// gta6-meme-x-01 entry program (Node 22, standard library only).
 //
-// The entry itself is a post on X: one GTA 6 meme picture plus the post's
-// text. This repository only has to tell the house where that post lives.
-// POST.json, sitting at the repository root, holds the post's address, and
-// this program's whole job is to place a copy of that file where the
-// grader reads it from. Nothing else is computed, fetched or written.
+// The entry itself is the X post: the house reads POST.json from the repo,
+// fetches the post from X, and judges its first picture plus its text.
+// All this program has to do is hand POST.json over: copy it from the
+// bot directory into the output directory, creating the output directory
+// first when it is missing. It takes no arguments and prints nothing on
+// success, so the grader can run it bare: `node main.ts`.
 //
-// Directory contract:
-//   MAKEFUN_BOT_DIR     the folder this repository is checked out into
-//                       (defaults to /bot inside the grader's container)
-//   MAKEFUN_OUTPUT_DIR  the folder the copy of POST.json must land in
-//                       (defaults to /output)
-// The program reads no clock, reaches for no network and touches no file
-// outside those two folders, so two runs always leave the same bytes.
+// Outside the grader's container the two directories are overridable:
+//   mkdir -p out && MAKEFUN_BOT_DIR=. MAKEFUN_OUTPUT_DIR=out node main.ts
 
-import { copyFileSync, mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const repoDir = process.env.MAKEFUN_BOT_DIR ?? '/bot';
-const outputDir = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const BOT_DIR = process.env.MAKEFUN_BOT_DIR ?? '/bot';
+const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const FILE_NAME = 'POST.json';
 
-// A fresh grading run may not have created the output folder yet.
-mkdirSync(outputDir, { recursive: true });
+function fail(message: string): never {
+  console.error(`gta6-meme-x-01: ${message}`);
+  process.exit(1);
+}
 
-const postFileSource = join(repoDir, 'POST.json');
-const postFileTarget = join(outputDir, 'POST.json');
+const sourcePath = join(BOT_DIR, FILE_NAME);
+let raw: Buffer;
+try {
+  raw = readFileSync(sourcePath);
+} catch (err) {
+  fail(`could not read ${sourcePath}: ${(err as Error).message}`);
+}
+
+let parsed: unknown;
+try {
+  parsed = JSON.parse(raw!.toString('utf8'));
+} catch (err) {
+  fail(`${FILE_NAME} is not valid JSON: ${(err as Error).message}`);
+}
+if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+  fail(`${FILE_NAME} must be a JSON object naming the post`);
+}
+const url = (parsed as Record<string, unknown>).url;
+// A quick shape check so a placeholder or a mistyped address fails here,
+// in plain language, instead of travelling to the grader and being refused.
+if (typeof url !== 'string' || !url.startsWith('https://x.com/')) {
+  fail(`${FILE_NAME} must carry a url like https://x.com/<handle>/status/<id>`);
+}
 
 try {
-  copyFileSync(postFileSource, postFileTarget);
-} catch (problem) {
-  // Without POST.json there is no entry to grade, so fail loudly instead
-  // of letting the run look successful with nothing handed in.
-  console.error(
-    `POST.json could not be copied from ${postFileSource}: ${(problem as Error).message}`,
-  );
-  process.exit(1);
+  mkdirSync(OUTPUT_DIR, { recursive: true });
+  writeFileSync(join(OUTPUT_DIR, FILE_NAME), raw!);
+} catch (err) {
+  fail(`could not write ${FILE_NAME} to ${OUTPUT_DIR}: ${(err as Error).message}`);
 }

@@ -3,32 +3,25 @@
 [![rank](https://make.fun/badge/gta6-meme-x-01/nizar350/gta6-meme-x/rank.svg)](https://make.fun/bounty/gta6-meme-x-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
 [![reward](https://make.fun/badge/gta6-meme-x-01/nizar350/gta6-meme-x/reward.svg)](https://make.fun/bounty/gta6-meme-x-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-meme-x-01)
 
-## The meme
+GTA V came out in 2013. GTA VI is finally here — and the whole world
+apparently had the same idea for launch day: phone in sick, boot up
+Leonida, and disappear into Vice City until the sun goes down. This meme
+is that day in one picture: a magenta-and-orange sunset over the skyline,
+palm trees on both sides, and the make.fun ghost standing in the middle of
+it all with its star coin, like it queued for the game right beside us.
 
-Thirteen years. That is how long the wait between GTA V and GTA VI felt —
-long enough to finish school, change jobs twice and learn what a "sick day"
-is really for. So the meme is the launch-day moment every fan recognises:
-you finally touch down in Leonida, the sun going down over a Vice City
-skyline, palms overhead… and you have already called in sick. The punchline
-is waiting in the same lobby: your boss, who called in sick too.
+The caption says the quiet part out loud — "WAITED 13 YEARS FOR GTA VI",
+then "CALLED IN SICK. MY BOSS IS IN THE SAME LOBBY." The picture itself
+is `meme.png` (1600×1200), drawn in code from the official make.fun
+mascot: the ghost was lifted off its magenta disc and set down in the
+sunset, so it belongs in the scene instead of floating on top of it.
 
-Standing in the middle of the scene is make.fun's own ghost mascot, coin in
-hand, looking like it just arrived in Leonida with the rest of us. The
-picture is `meme.png` in this repository: a 1600×1200 sunset scene built
-around the official mascot, captioned "WAITED 13 YEARS FOR GTA VI" /
-"CALLED IN SICK. MY BOSS IS IN THE SAME LOBBY."
-
-## The post
-
-The meme is posted on X from a public account, and `POST.json` at the root
-of this repository holds that post's address — that file is the entry. The
-post's text lands the same sick-day joke, carries the bounty link and my
-play code, and tells readers the other thing worth knowing: on make.fun,
-people and their AI agents build things, enter paid bounties like this one
-and earn real money when they win.
-
-`main.ts` is the hand-in program: it copies `POST.json` from the repository
-root into the output directory the grader reads (`/output` by default).
+The post is live on X from a public account, and `POST.json` points at it
+— that address is the entry. The post's text carries the same joke, the
+bounty link, and the play code, plus the pitch that matters: make.fun is
+where people and their AI agents build things and win real money in
+bounties like this one. `main.ts` is the small hand-in program that copies
+`POST.json` into the grader's output directory.
 
 ## Run it
 
